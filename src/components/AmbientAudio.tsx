@@ -42,7 +42,7 @@ const AmbientAudio = () => {
     osc.stop(ctx.currentTime + 4);
     nodesRef.current.push(osc, gain);
 
-    const nextDelay = 4000 + Math.random() * 8000;
+    const nextDelay = 3000 + Math.random() * 7000;
     belltimeRef.current = setTimeout(() => schedulebell(ctx, reverb, masterGain), nextDelay);
   }, []);
 
@@ -72,7 +72,7 @@ const AmbientAudio = () => {
       lfo.frequency.value = 0.05 + Math.random() * 0.08;
       lfoGain.gain.value = 0.015;
 
-      const baseVol = freq < 200 ? 0.08 : 0.03;
+      const baseVol = freq < 200 ? 0.04 : 0.015;
       gainNode.gain.value = baseVol;
 
       lfo.connect(lfoGain);
