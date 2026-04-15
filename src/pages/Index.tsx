@@ -3,11 +3,13 @@ import StarField from "../components/StarField";
 import KarmaStudy from "../components/KarmaStudy";
 import mysticOrnament from "@/assets/mystic-ornament.jpg";
 import PastLifeReading from "../components/PastLifeReading";
+import AmbientAudio from "../components/AmbientAudio";
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-background bg-mystic-glow relative">
       <StarField />
+      <AmbientAudio />
 
       <div className="relative z-10">
         {/* Hero */}
