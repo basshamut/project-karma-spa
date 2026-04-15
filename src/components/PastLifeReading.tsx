@@ -120,7 +120,7 @@ const PastLifeReading = () => {
             <Input
               type="number"
               min={1900}
-              max={2100}
+              max={1999}
               value={year}
               onChange={(e) => setYear(e.target.value)}
               placeholder="1990"

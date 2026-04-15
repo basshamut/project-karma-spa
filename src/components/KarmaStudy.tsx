@@ -12,21 +12,23 @@ interface KarmaResult {
 }
 
 const KarmaStudy = () => {
-  const [name, setName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [results, setResults] = useState<KarmaResult[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim()) return;
+    if (!firstName.trim()) return;
+    const fullName = [firstName.trim(), lastName.trim()].filter(Boolean).join(" ");
     setLoading(true);
     setError("");
     setResults(null);
 
     try {
       const resp = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/karma-api/v1/karmas/study?name=${encodeURIComponent(name.trim())}`
+        `${import.meta.env.VITE_API_BASE_URL}/karma-api/v1/karmas/study?name=${encodeURIComponent(fullName)}`
       );
       const json = await resp.json();
       if (json.data && json.data.length > 0) {
@@ -53,20 +55,33 @@ const KarmaStudy = () => {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm font-sans text-muted-foreground mb-2 uppercase tracking-widest">
-            Tu nombre completo
-          </label>
-          <Input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Ingresa tu nombre..."
-            className="bg-muted/50 border-border text-foreground placeholder:text-muted-foreground/50 font-body text-lg h-12"
-          />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-sans text-muted-foreground mb-2 uppercase tracking-widest">
+              Nombre(s)
+            </label>
+            <Input
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              placeholder="Ingresa tu nombre..."
+              className="bg-muted/50 border-border text-foreground placeholder:text-muted-foreground/50 font-body text-lg h-12"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-sans text-muted-foreground mb-2 uppercase tracking-widest">
+              Apellido(s)
+            </label>
+            <Input
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              placeholder="Ingresa tu apellido..."
+              className="bg-muted/50 border-border text-foreground placeholder:text-muted-foreground/50 font-body text-lg h-12"
+            />
+          </div>
         </div>
         <Button
           type="submit"
-          disabled={loading || !name.trim()}
+          disabled={loading || !firstName.trim()}
           className="w-full h-12 bg-primary text-primary-foreground font-display text-sm uppercase tracking-[0.2em] hover:shadow-gold transition-shadow duration-500"
         >
           {loading ? (
