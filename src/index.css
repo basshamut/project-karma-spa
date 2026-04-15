@@ -1,13 +1,151 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Raleway:wght@300;400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 250 25% 6%;
+    --foreground: 45 30% 88%;
+
+    --card: 250 20% 10%;
+    --card-foreground: 45 30% 88%;
+
+    --popover: 250 20% 10%;
+    --popover-foreground: 45 30% 88%;
+
+    --primary: 45 70% 55%;
+    --primary-foreground: 250 25% 6%;
+
+    --secondary: 270 30% 20%;
+    --secondary-foreground: 45 30% 88%;
+
+    --muted: 260 20% 15%;
+    --muted-foreground: 250 15% 55%;
+
+    --accent: 280 60% 40%;
+    --accent-foreground: 45 30% 88%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 260 20% 18%;
+    --input: 260 20% 18%;
+    --ring: 45 70% 55%;
+
+    --radius: 0.75rem;
+
+    --gold: 45 70% 55%;
+    --gold-light: 45 80% 70%;
+    --gold-dark: 40 60% 40%;
+    --mystic-purple: 270 40% 30%;
+    --mystic-deep: 260 35% 12%;
+    --celestial: 220 60% 50%;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Cinzel', serif;
+  }
+}
+
+@layer utilities {
+  .text-gold-gradient {
+    background: linear-gradient(
+      135deg,
+      hsl(var(--gold-dark)),
+      hsl(var(--gold)),
+      hsl(var(--gold-light)),
+      hsl(var(--gold))
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .border-gold-gradient {
+    border-image: linear-gradient(
+      135deg,
+      hsl(var(--gold-dark)),
+      hsl(var(--gold)),
+      hsl(var(--gold-light))
+    ) 1;
+  }
+
+  .bg-mystic-glow {
+    background: radial-gradient(
+      ellipse at 50% 0%,
+      hsl(var(--mystic-purple) / 0.3) 0%,
+      hsl(var(--background)) 70%
+    );
+  }
+
+  .bg-card-mystic {
+    background: linear-gradient(
+      160deg,
+      hsl(var(--mystic-deep)),
+      hsl(var(--card)) 50%,
+      hsl(var(--mystic-deep))
+    );
+  }
+
+  .shadow-mystic {
+    box-shadow:
+      0 0 20px hsl(var(--mystic-purple) / 0.2),
+      0 0 60px hsl(var(--mystic-purple) / 0.1),
+      inset 0 1px 0 hsl(var(--gold) / 0.1);
+  }
+
+  .shadow-gold {
+    box-shadow:
+      0 0 15px hsl(var(--gold) / 0.3),
+      0 0 40px hsl(var(--gold) / 0.1);
+  }
+}
+
+/* Starfield animation */
+@keyframes twinkle {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 1; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+
+.animate-twinkle {
+  animation: twinkle 3s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 4s ease-in-out infinite;
 }
