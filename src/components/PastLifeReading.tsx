@@ -22,6 +22,8 @@ const MONTH_LABELS: Record<string, string> = {
   SEPTIEMBRE: "Septiembre", OCTUBRE: "Octubre", NOVIEMBRE: "Noviembre", DICIEMBRE: "Diciembre",
 };
 
+const YEARS = Array.from({ length: 100 }, (_, i) => String(1999 - i));
+
 interface PastLifeResult {
   sexInPastLife: string;
   country: string;
@@ -117,15 +119,18 @@ const PastLifeReading = () => {
           </div>
           <div>
             <label className="block text-xs font-sans text-muted-foreground mb-2 uppercase tracking-widest">Año</label>
-            <Input
-              type="number"
-              min={1900}
-              max={1999}
-              value={year}
-              onChange={(e) => setYear(e.target.value)}
-              placeholder="1990"
-              className="bg-muted/50 border-border text-foreground font-body text-lg h-12 text-center"
-            />
+            <Select value={year} onValueChange={setYear}>
+              <SelectTrigger className="bg-muted/50 border-border text-foreground font-body h-12">
+                <SelectValue placeholder="Año" />
+              </SelectTrigger>
+              <SelectContent className="bg-card border-border">
+                {YEARS.map((y) => (
+                  <SelectItem key={y} value={y} className="font-body">
+                    {y}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
 
