@@ -13,7 +13,7 @@ interface KarmaResult {
 }
 
 const KarmaStudy = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [results, setResults] = useState<KarmaResult[] | null>(null);
@@ -30,7 +30,7 @@ const KarmaStudy = () => {
 
     try {
       const resp = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/karma-api/v1/karmas/study?name=${encodeURIComponent(fullName)}`
+        `${import.meta.env.VITE_API_BASE_URL}/karma-api/v1/karmas/study?name=${encodeURIComponent(fullName)}&lang=${i18n.language}`
       );
       const json = await resp.json();
       if (json.data && json.data.length > 0) {

@@ -44,7 +44,7 @@ const symbolEmoji: Record<string, string> = {
 };
 
 const PastLifeReading = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [day, setDay] = useState("");
   const [month, setMonth] = useState("");
   const [year, setYear] = useState("");
@@ -63,7 +63,7 @@ const PastLifeReading = () => {
     setResult(null);
 
     try {
-      const url = `${import.meta.env.VITE_API_BASE_URL}/karma-api/v1/past-life?day=${day}&month=${month}&year=${year}&sex=${sex}`;
+      const url = `${import.meta.env.VITE_API_BASE_URL}/karma-api/v1/past-life?day=${day}&month=${month}&year=${year}&sex=${sex}&lang=${i18n.language}`;
       const resp = await fetch(url);
       const json = await resp.json();
       if (json.data) {
@@ -76,19 +76,6 @@ const PastLifeReading = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const translateSexInPast = (sex?: string) => {
-    if (!sex) return "";
-    return sex.toLowerCase() === "masculino"
-      ? t("sex.masculine")
-      : t("sex.feminine");
-  };
-
-  const translateSymbol = (symbol: string) => {
-    const key = `symbol.${symbol}` as const;
-    const translated = t(key);
-    return translated !== key ? translated : symbol;
   };
 
   return (
@@ -212,7 +199,7 @@ const PastLifeReading = () => {
                 </span>
               </motion.div>
               <p className="text-xs font-sans text-muted-foreground uppercase tracking-[0.3em]">
-                {t("pastLife.symbolLabel", { symbol: translateSymbol(result.personalitySymbol) })}
+                {t("pastLife.symbolLabel", { symbol: result.personalitySymbol })}
               </p>
             </div>
 
@@ -220,8 +207,8 @@ const PastLifeReading = () => {
               {[
                 { label: t("pastLife.country"), value: result.country, icon: "🌍" },
                 { label: t("pastLife.yearApprox"), value: result.yearApprox, icon: "⏳" },
-                { label: t("pastLife.sexInPast"), value: translateSexInPast(result.sexInPastLife), icon: "⚤" },
-                { label: t("pastLife.symbol"), value: translateSymbol(result.personalitySymbol), icon: "◈" },
+                { label: t("pastLife.sexInPast"), value: result.sexInPastLife, icon: "⚤" },
+                { label: t("pastLife.symbol"), value: result.personalitySymbol, icon: "◈" },
               ].map((item, i) => (
                 <motion.div
                   key={item.label}
