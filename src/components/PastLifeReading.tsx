@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import MysticCard from "./MysticCard";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
+import { getCachedData, setCachedData } from "../lib/cache";
 import {
   Select,
   SelectContent,
@@ -43,6 +44,13 @@ const symbolEmoji: Record<string, string> = {
   "Sol": "☉",
 };
 
+interface LastParams {
+  day: string;
+  month: string;
+  year: string;
+  sex: string;
+}
+
 const PastLifeReading = () => {
   const { t, i18n } = useTranslation();
   const [day, setDay] = useState("");
@@ -52,21 +60,27 @@ const PastLifeReading = () => {
   const [result, setResult] = useState<PastLifeResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const lastParamsRef = useRef<LastParams | null>(null);
 
   const canSubmit = day && month && year && sex;
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!canSubmit) return;
+  const fetchPastLife = useCallback(async (params: LastParams) => {
+    const url = `${import.meta.env.VITE_API_BASE_URL}/karma-api/v1/past-life?day=${params.day}&month=${params.month}&year=${params.year}&sex=${params.sex}&lang=${i18n.language}`;
+
+    const cached = getCachedData<PastLifeResult>(url);
+    if (cached) {
+      setResult(cached);
+      return;
+    }
+
     setLoading(true);
     setError("");
-    setResult(null);
 
     try {
-      const url = `${import.meta.env.VITE_API_BASE_URL}/karma-api/v1/past-life?day=${day}&month=${month}&year=${year}&sex=${sex}&lang=${i18n.language}`;
       const resp = await fetch(url);
       const json = await resp.json();
       if (json.data) {
+        setCachedData(url, json.data);
         setResult(json.data);
       } else {
         setError(t("pastLife.error"));
@@ -76,6 +90,20 @@ const PastLifeReading = () => {
     } finally {
       setLoading(false);
     }
+  }, [i18n.language, t]);
+
+  useEffect(() => {
+    if (lastParamsRef.current) {
+      fetchPastLife(lastParamsRef.current);
+    }
+  }, [i18n.language, fetchPastLife]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!canSubmit) return;
+    const params: LastParams = { day, month, year, sex };
+    lastParamsRef.current = params;
+    fetchPastLife(params);
   };
 
   return (

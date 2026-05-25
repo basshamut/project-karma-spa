@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import MysticCard from "./MysticCard";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
+import { getCachedData, setCachedData } from "../lib/cache";
 
 interface KarmaResult {
   number: number;
@@ -19,21 +20,26 @@ const KarmaStudy = () => {
   const [results, setResults] = useState<KarmaResult[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const lastSubmittedRef = useRef("");
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!firstName.trim()) return;
-    const fullName = [firstName.trim(), lastName.trim()].filter(Boolean).join(" ");
+  const fetchKarma = useCallback(async (fullName: string) => {
+    if (!fullName.trim()) return;
+    const url = `${import.meta.env.VITE_API_BASE_URL}/karma-api/v1/karmas/study?name=${encodeURIComponent(fullName)}&lang=${i18n.language}`;
+
+    const cached = getCachedData<KarmaResult[]>(url);
+    if (cached) {
+      setResults(cached);
+      return;
+    }
+
     setLoading(true);
     setError("");
-    setResults(null);
 
     try {
-      const resp = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/karma-api/v1/karmas/study?name=${encodeURIComponent(fullName)}&lang=${i18n.language}`
-      );
+      const resp = await fetch(url);
       const json = await resp.json();
       if (json.data && json.data.length > 0) {
+        setCachedData(url, json.data);
         setResults(json.data);
       } else {
         setResults([]);
@@ -43,6 +49,20 @@ const KarmaStudy = () => {
     } finally {
       setLoading(false);
     }
+  }, [i18n.language, t]);
+
+  useEffect(() => {
+    if (lastSubmittedRef.current) {
+      fetchKarma(lastSubmittedRef.current);
+    }
+  }, [i18n.language, fetchKarma]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!firstName.trim()) return;
+    const fullName = [firstName.trim(), lastName.trim()].filter(Boolean).join(" ");
+    lastSubmittedRef.current = fullName;
+    fetchKarma(fullName);
   };
 
   return (
