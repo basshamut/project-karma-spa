@@ -12,6 +12,11 @@ import {
   SelectValue,
 } from "./ui/select";
 
+const MONTHS = [
+  "ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO",
+  "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE",
+];
+
 const MONTH_KEYS = [
   "01", "02", "03", "04", "05", "06",
   "07", "08", "09", "10", "11", "12",
@@ -73,7 +78,8 @@ const PastLifeReading = () => {
     }
   };
 
-  const translateSexInPast = (sex: string) => {
+  const translateSexInPast = (sex?: string) => {
+    if (!sex) return "";
     return sex.toLowerCase() === "masculino"
       ? t("sex.masculine")
       : t("sex.feminine");
@@ -117,9 +123,9 @@ const PastLifeReading = () => {
                 <SelectValue placeholder={t("pastLife.month")} />
               </SelectTrigger>
               <SelectContent className="bg-card border-border">
-                {MONTH_KEYS.map((key) => (
-                  <SelectItem key={key} value={t(`months.${key}`)} className="font-body">
-                    {t(`months.label.${key}`)}
+                {MONTHS.map((m, i) => (
+                  <SelectItem key={m} value={m} className="font-body">
+                    {t(`months.label.${MONTH_KEYS[i]}`)}
                   </SelectItem>
                 ))}
               </SelectContent>
