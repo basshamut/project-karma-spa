@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import MysticCard from "./MysticCard";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
@@ -12,6 +13,7 @@ interface KarmaResult {
 }
 
 const KarmaStudy = () => {
+  const { t } = useTranslation();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [results, setResults] = useState<KarmaResult[] | null>(null);
@@ -37,7 +39,7 @@ const KarmaStudy = () => {
         setResults([]);
       }
     } catch {
-      setError("No se pudo conectar con el oráculo. Intenta de nuevo.");
+      setError(t("karma.error"));
     } finally {
       setLoading(false);
     }
@@ -47,10 +49,10 @@ const KarmaStudy = () => {
     <MysticCard delay={0.2}>
       <div className="text-center mb-6">
         <h2 className="text-2xl md:text-3xl font-display text-gold-gradient mb-2">
-          Deuda Kármica
+          {t("karma.title")}
         </h2>
         <p className="text-muted-foreground font-body text-lg">
-          Descubre las lecciones que tu alma aún debe aprender
+          {t("karma.subtitle")}
         </p>
       </div>
 
@@ -58,23 +60,23 @@ const KarmaStudy = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-sans text-muted-foreground mb-2 uppercase tracking-widest">
-              Nombre(s)
+              {t("karma.firstName")}
             </label>
             <Input
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
-              placeholder="Ingresa tu nombre..."
+              placeholder={t("karma.firstNamePlaceholder")}
               className="bg-muted/50 border-border text-foreground placeholder:text-muted-foreground/50 font-body text-lg h-12"
             />
           </div>
           <div>
             <label className="block text-sm font-sans text-muted-foreground mb-2 uppercase tracking-widest">
-              Apellido(s)
+              {t("karma.lastName")}
             </label>
             <Input
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
-              placeholder="Ingresa tu apellido..."
+              placeholder={t("karma.lastNamePlaceholder")}
               className="bg-muted/50 border-border text-foreground placeholder:text-muted-foreground/50 font-body text-lg h-12"
             />
           </div>
@@ -89,10 +91,10 @@ const KarmaStudy = () => {
               animate={{ opacity: [0.5, 1, 0.5] }}
               transition={{ repeat: Infinity, duration: 1.5 }}
             >
-              Consultando el cosmos...
+              {t("karma.loading")}
             </motion.span>
           ) : (
-            "Revelar Karma"
+            t("karma.submit")
           )}
         </Button>
       </form>
@@ -117,9 +119,9 @@ const KarmaStudy = () => {
           >
             {results.length === 0 ? (
               <div className="text-center py-8">
-                <p className="text-gold font-display text-xl mb-2">✦ Alma en Equilibrio ✦</p>
+                <p className="text-gold font-display text-xl mb-2">{t("karma.noResultsTitle")}</p>
                 <p className="text-muted-foreground font-body text-lg">
-                  No se encontraron deudas kármicas pendientes para este nombre.
+                  {t("karma.noResultsMessage")}
                 </p>
               </div>
             ) : (
@@ -136,20 +138,20 @@ const KarmaStudy = () => {
                       {k.number}
                     </span>
                     <h3 className="font-display text-foreground text-sm uppercase tracking-wider">
-                      Número Kármico {k.number}
+                      {t("karma.resultTitle", { number: k.number })}
                     </h3>
                   </div>
                   <div className="space-y-3 font-body text-base leading-relaxed">
                     <div>
-                      <span className="text-gold/80 font-sans text-xs uppercase tracking-widest">Lo que faltó</span>
+                      <span className="text-gold/80 font-sans text-xs uppercase tracking-widest">{t("karma.missing")}</span>
                       <p className="text-foreground/90 mt-1">{k.missing}</p>
                     </div>
                     <div>
-                      <span className="text-gold/80 font-sans text-xs uppercase tracking-widest">Situación actual</span>
+                      <span className="text-gold/80 font-sans text-xs uppercase tracking-widest">{t("karma.situation")}</span>
                       <p className="text-foreground/90 mt-1">{k.situation}</p>
                     </div>
                     <div>
-                      <span className="text-gold/80 font-sans text-xs uppercase tracking-widest">Cómo mejorar</span>
+                      <span className="text-gold/80 font-sans text-xs uppercase tracking-widest">{t("karma.improve")}</span>
                       <p className="text-foreground/90 mt-1">{k.improve}</p>
                     </div>
                   </div>

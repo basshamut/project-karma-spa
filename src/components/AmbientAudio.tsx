@@ -1,11 +1,13 @@
 import { useState, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 // Frecuencias de la escala de 432 Hz — armónicas cósmicas
 const DRONES = [108, 144, 216, 288, 432];
 const BELL_FREQS = [528, 639, 741, 852, 963];
 
 const AmbientAudio = () => {
+  const { t } = useTranslation();
   const [playing, setPlaying] = useState(false);
   const ctxRef = useRef<AudioContext | null>(null);
   const nodesRef = useRef<AudioNode[]>([]);
@@ -147,7 +149,7 @@ const AmbientAudio = () => {
   return (
     <motion.button
       onClick={toggle}
-      title={playing ? "Silenciar ambiente" : "Activar ambiente místico"}
+      title={playing ? t("ambientAudio.stop") : t("ambientAudio.play")}
       className="fixed bottom-6 right-6 z-50 w-12 h-12 rounded-full border border-gold/40 bg-background/70 backdrop-blur-sm flex items-center justify-center text-lg hover:border-gold/80 hover:bg-background/90 transition-colors duration-300"
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.95 }}

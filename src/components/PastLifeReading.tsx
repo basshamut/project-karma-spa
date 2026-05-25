@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import MysticCard from "./MysticCard";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
@@ -11,16 +12,10 @@ import {
   SelectValue,
 } from "./ui/select";
 
-const MONTHS = [
-  "ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO",
-  "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE",
+const MONTH_KEYS = [
+  "01", "02", "03", "04", "05", "06",
+  "07", "08", "09", "10", "11", "12",
 ];
-
-const MONTH_LABELS: Record<string, string> = {
-  ENERO: "Enero", FEBRERO: "Febrero", MARZO: "Marzo", ABRIL: "Abril",
-  MAYO: "Mayo", JUNIO: "Junio", JULIO: "Julio", AGOSTO: "Agosto",
-  SEPTIEMBRE: "Septiembre", OCTUBRE: "Octubre", NOVIEMBRE: "Noviembre", DICIEMBRE: "Diciembre",
-};
 
 const YEARS = Array.from({ length: 100 }, (_, i) => String(1999 - i));
 
@@ -33,7 +28,18 @@ interface PastLifeResult {
   personality: string;
 }
 
+const symbolEmoji: Record<string, string> = {
+  "Triángulo": "△",
+  "Círculo": "○",
+  "Cuadrado": "□",
+  "Estrella": "☆",
+  "Rombo": "◇",
+  "Luna": "☽",
+  "Sol": "☉",
+};
+
 const PastLifeReading = () => {
+  const { t } = useTranslation();
   const [day, setDay] = useState("");
   const [month, setMonth] = useState("");
   const [year, setYear] = useState("");
@@ -58,40 +64,42 @@ const PastLifeReading = () => {
       if (json.data) {
         setResult(json.data);
       } else {
-        setError("No se pudo obtener tu lectura. Verifica los datos.");
+        setError(t("pastLife.error"));
       }
     } catch {
-      setError("No se pudo conectar con el oráculo. Intenta de nuevo.");
+      setError(t("pastLife.errorConnection"));
     } finally {
       setLoading(false);
     }
   };
 
-  const symbolEmoji: Record<string, string> = {
-    "Triángulo": "△",
-    "Círculo": "○",
-    "Cuadrado": "□",
-    "Estrella": "☆",
-    "Rombo": "◇",
-    "Luna": "☽",
-    "Sol": "☉",
+  const translateSexInPast = (sex: string) => {
+    return sex.toLowerCase() === "masculino"
+      ? t("sex.masculine")
+      : t("sex.feminine");
+  };
+
+  const translateSymbol = (symbol: string) => {
+    const key = `symbol.${symbol}` as const;
+    const translated = t(key);
+    return translated !== key ? translated : symbol;
   };
 
   return (
     <MysticCard delay={0.4}>
       <div className="text-center mb-6">
         <h2 className="text-2xl md:text-3xl font-display text-gold-gradient mb-2">
-          Vida Pasada
+          {t("pastLife.title")}
         </h2>
         <p className="text-muted-foreground font-body text-lg">
-          Viaja al pasado y descubre quién fuiste en otra vida
+          {t("pastLife.subtitle")}
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-3 gap-3">
           <div>
-            <label className="block text-xs font-sans text-muted-foreground mb-2 uppercase tracking-widest">Día</label>
+            <label className="block text-xs font-sans text-muted-foreground mb-2 uppercase tracking-widest">{t("pastLife.day")}</label>
             <Input
               type="number"
               min={1}
@@ -103,25 +111,25 @@ const PastLifeReading = () => {
             />
           </div>
           <div>
-            <label className="block text-xs font-sans text-muted-foreground mb-2 uppercase tracking-widest">Mes</label>
+            <label className="block text-xs font-sans text-muted-foreground mb-2 uppercase tracking-widest">{t("pastLife.month")}</label>
             <Select value={month} onValueChange={setMonth}>
               <SelectTrigger className="bg-muted/50 border-border text-foreground font-body h-12">
-                <SelectValue placeholder="Mes" />
+                <SelectValue placeholder={t("pastLife.month")} />
               </SelectTrigger>
               <SelectContent className="bg-card border-border">
-                {MONTHS.map((m) => (
-                  <SelectItem key={m} value={m} className="font-body">
-                    {MONTH_LABELS[m]}
+                {MONTH_KEYS.map((key) => (
+                  <SelectItem key={key} value={t(`months.${key}`)} className="font-body">
+                    {t(`months.label.${key}`)}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
           <div>
-            <label className="block text-xs font-sans text-muted-foreground mb-2 uppercase tracking-widest">Año</label>
+            <label className="block text-xs font-sans text-muted-foreground mb-2 uppercase tracking-widest">{t("pastLife.year")}</label>
             <Select value={year} onValueChange={setYear}>
               <SelectTrigger className="bg-muted/50 border-border text-foreground font-body h-12">
-                <SelectValue placeholder="Año" />
+                <SelectValue placeholder={t("pastLife.year")} />
               </SelectTrigger>
               <SelectContent className="bg-card border-border">
                 {YEARS.map((y) => (
@@ -136,15 +144,15 @@ const PastLifeReading = () => {
 
         <div>
           <label className="block text-xs font-sans text-muted-foreground mb-2 uppercase tracking-widest">
-            Sexo biológico
+            {t("pastLife.biologicalSex")}
           </label>
           <Select value={sex} onValueChange={setSex}>
             <SelectTrigger className="bg-muted/50 border-border text-foreground font-body h-12">
-              <SelectValue placeholder="Seleccionar" />
+              <SelectValue placeholder={t("pastLife.selectPlaceholder")} />
             </SelectTrigger>
             <SelectContent className="bg-card border-border">
-              <SelectItem value="M" className="font-body">Masculino</SelectItem>
-              <SelectItem value="F" className="font-body">Femenino</SelectItem>
+              <SelectItem value="M" className="font-body">{t("pastLife.male")}</SelectItem>
+              <SelectItem value="F" className="font-body">{t("pastLife.female")}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -159,10 +167,10 @@ const PastLifeReading = () => {
               animate={{ opacity: [0.5, 1, 0.5] }}
               transition={{ repeat: Infinity, duration: 1.5 }}
             >
-              Abriendo los registros akáshicos...
+              {t("pastLife.loading")}
             </motion.span>
           ) : (
-            "Descubrir Vida Pasada"
+            t("pastLife.submit")
           )}
         </Button>
       </form>
@@ -198,16 +206,16 @@ const PastLifeReading = () => {
                 </span>
               </motion.div>
               <p className="text-xs font-sans text-muted-foreground uppercase tracking-[0.3em]">
-                Símbolo: {result.personalitySymbol}
+                {t("pastLife.symbolLabel", { symbol: translateSymbol(result.personalitySymbol) })}
               </p>
             </div>
 
             <div className="grid grid-cols-2 gap-4 mb-6">
               {[
-                { label: "País", value: result.country, icon: "🌍" },
-                { label: "Año aprox.", value: result.yearApprox, icon: "⏳" },
-                { label: "Sexo en vida pasada", value: result.sexInPastLife, icon: "⚤" },
-                { label: "Símbolo", value: result.personalitySymbol, icon: "◈" },
+                { label: t("pastLife.country"), value: result.country, icon: "🌍" },
+                { label: t("pastLife.yearApprox"), value: result.yearApprox, icon: "⏳" },
+                { label: t("pastLife.sexInPast"), value: translateSexInPast(result.sexInPastLife), icon: "⚤" },
+                { label: t("pastLife.symbol"), value: translateSymbol(result.personalitySymbol), icon: "◈" },
               ].map((item, i) => (
                 <motion.div
                   key={item.label}
@@ -233,7 +241,7 @@ const PastLifeReading = () => {
             >
               <div className="border border-border/50 rounded-md p-5 bg-muted/20">
                 <span className="text-gold/80 font-sans text-xs uppercase tracking-widest">
-                  Profesión anterior
+                  {t("pastLife.previousProfession")}
                 </span>
                 <p className="text-foreground/90 font-body text-base mt-2 leading-relaxed">
                   {result.profession}
@@ -241,7 +249,7 @@ const PastLifeReading = () => {
               </div>
               <div className="border border-border/50 rounded-md p-5 bg-muted/20">
                 <span className="text-gold/80 font-sans text-xs uppercase tracking-widest">
-                  Personalidad
+                  {t("pastLife.personality")}
                 </span>
                 <p className="text-foreground/90 font-body text-base mt-2 leading-relaxed">
                   {result.personality}
