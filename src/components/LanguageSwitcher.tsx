@@ -23,7 +23,7 @@ const LanguageSwitcher = () => {
   const current = LANGUAGES.find((l) => l.code === i18n.language) || LANGUAGES[0];
 
   return (
-    <div className="fixed top-6 right-6 z-50">
+    <div>
       <motion.button
         onClick={() => setOpen(!open)}
         className="flex items-center gap-2 px-3 py-2 rounded-md border border-gold/30 bg-background/70 backdrop-blur-sm text-xs font-sans text-muted-foreground uppercase tracking-widest hover:border-gold/60 hover:text-foreground transition-colors duration-300"

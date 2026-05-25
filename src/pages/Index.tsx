@@ -7,6 +7,7 @@ import mysticOrnament from "@/assets/mystic-ornament.jpg";
 import PastLifeReading from "../components/PastLifeReading";
 import AmbientAudio from "../components/AmbientAudio";
 import LanguageSwitcher from "../components/LanguageSwitcher";
+import ThemeToggle from "../components/ThemeToggle";
 
 const Index = () => {
   const { t, i18n } = useTranslation();
@@ -27,7 +28,10 @@ const Index = () => {
       <AmbientAudio />
 
       <div className="relative z-10">
-        <LanguageSwitcher />
+        <div className="fixed top-6 right-6 z-50 flex items-center gap-2">
+          <ThemeToggle />
+          <LanguageSwitcher />
+        </div>
 
         {/* Hero */}
         <header className="pt-16 pb-12 md:pt-24 md:pb-16 text-center px-4">
